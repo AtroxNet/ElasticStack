@@ -1,0 +1,24 @@
+
+# version: '3.7'
+
+services:
+  logstash:
+    image: logstash:8.6.1
+    container_name: logstash
+    volumes:
+      - ./config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
+      - ./pipeline:/usr/share/logstash/pipeline:ro,Z
+    ports:
+      - 5044:5044/tcp
+      - 5044:5044/udp
+    environment:
+      - PUID=1000    # find user PUID and PGID by typing "id" in cli and hit enter
+      - PGID=1000
+      - "LS_JAVA_OPTS=-Xmx4g -Xms4g"
+    networks:
+      - elk
+    restart: unless-stopped
+
+networks:
+  elk:
+    driver: bridge
